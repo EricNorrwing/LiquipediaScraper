@@ -1,4 +1,4 @@
-import pageScraper from "./pageScraper"
+import regionScraper from "./RegionScraper"
 
 
 const app = async () => {
@@ -7,7 +7,7 @@ const app = async () => {
 
     const testURL = "https://liquipedia.net/dota2/Portal:Teams"
 
-    await pageScraper(testURL)
+    await regionScraper(testURL, ['.panel-box-heading'])
     
 }
 

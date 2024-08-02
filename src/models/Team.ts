@@ -2,8 +2,8 @@ type Team = {
     name: string;
     players: Player[];
     staff: Staff[];
+    region: string;
     earnings: number;
-    region: Region;
     location: string;
     active: boolean;
 }
