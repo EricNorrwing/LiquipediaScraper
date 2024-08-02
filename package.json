@@ -1,0 +1,23 @@
+{
+  "dependencies": {
+    "init": "^0.1.2",
+    "puppeteer": "^22.15.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "tsc": "^2.0.4"
+  },
+  "name": "liquipediascraper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "scrape": "npm run build && node dist/scraper.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
