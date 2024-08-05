@@ -1,36 +1,37 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { Browser, ElementHandle, executablePath } from 'puppeteer';
-/*
+
 puppeteer.use(StealthPlugin());
 
-const teamScraper = async (regionURL: string): Promise<string[]> => {
-  const browser: Browser = await puppeteer.launch({
-    headless: true,
-    executablePath: executablePath()
-  });
+const teamScraper = async (regionURL: string): Promise<Team[]> => {
+  
+    const browser: Browser = await puppeteer.launch({
+        headless: true,
+        executablePath: executablePath(),
+      });
 
-  const teams: string[] = [];
-  const teamsURL: string[] = [];
+    const selector: string = '.team-template-text';
+    const teams: Team[] = []
 
-  try {
-    const page = await browser.newPage();
-    await page.goto(regionURL);
+    try {
+        const page = await browser.newPage();
+        await page.goto(regionURL);
 
-    const teamElements: ElementHandle<Element>[] = await page.$$('.team-template-text a');
-    const teamNames = await Promise.all(
-      teamElements.map(async (item) => {
-        const regionURL = await teamElements.$eval('a', el => el.getAttribute('href'));
-        return item.evaluate(el => el.textContent?.trim() || '');
-        
+        const teamElements: ElementHandle<Element>[] = await page.$$(selector);
 
-      })
-    );
+        for (const teamElement of teamElements) {
+            const name = await teamElement.$eval("a",(el) => el.textContent?.trim() || "");
+            const url = await teamElement.$eval("a",(el) => el.getAttribute("href") || "");
+      
+            if(url.includes("Inactive")) {
+              continue
+            }
+            console.log(name, url)
+            //teams.push({ name, url });
+          }
 
-    const cleanedTeamNames = teamNames.filter((name): name is string => name !== '');
-    teams.push(...cleanedTeamNames);
 
-    console.log(`Teams for ${regionURL}:`, teams);
     return teams;
   } catch (error) {
     console.error('Error during team scraping:', error);
@@ -41,4 +42,3 @@ const teamScraper = async (regionURL: string): Promise<string[]> => {
 };
 
 export default teamScraper;
-*/

@@ -1,5 +1,6 @@
 type Team = {
-    name: string;
+    name: string,
+    url: string,
     players: Player[];
     staff: Staff[];
     region: string;

@@ -38,7 +38,7 @@ const regionScraper = async (): Promise<Region[]> =>  {
     console.log(region);
     return region;
   } catch (error) {
-    console.error("Error during scraping:", error);
+    console.error("Error during region scraping:", error);
     return [];
   } finally {
     await browser.close();

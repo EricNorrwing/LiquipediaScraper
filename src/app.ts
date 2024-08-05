@@ -1,16 +1,19 @@
 import regionScraper from "./RegionScraper"
+import teamScraper from "./TeamScraper";
 
 
 const app = async () => {
     const scrapeURL = "https://liquipedia.net/dota2/Main_Page";
     
 
-    const RegionList = regionScraper();
+    const regionList: Region[] = await regionScraper();
+    let teamList: Team[] = []
 
-  
-    // '.panel-box-heading' is the name of the box containing each region
-    // await regionScraper(testURL, ['.panel-box-heading']);
-
+    for (const region of regionList) {
+        const teams = await teamScraper(region.url)
+        teamList = teamList.concat(teams)
+    }
+    
 
   };
   
