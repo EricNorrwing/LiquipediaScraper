@@ -1,14 +1,9 @@
 {
   "dependencies": {
-    "init": "^0.1.2",
     "puppeteer": "^22.15.0",
     "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2",
-    "tsc": "^2.0.4"
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   },
-  "name": "liquipediascraper",
-  "version": "1.0.0",
-  "main": "app.js",
   "devDependencies": {
     "typescript": "^5.5.4"
   },
@@ -17,6 +12,9 @@
     "build": "tsc",
     "scrape": "npm run build && node dist/app.js"
   },
+  "name": "liquipediascraper",
+  "version": "1.0.0",
+  "main": "app.js",
   "author": "",
   "license": "ISC",
   "description": ""

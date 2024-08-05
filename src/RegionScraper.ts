@@ -1,39 +1,45 @@
-import puppeteer from 'puppeteer-extra';
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { Browser, ElementHandle, executablePath } from 'puppeteer';
+import puppeteer from "puppeteer-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import { Browser, ElementHandle, executablePath } from "puppeteer";
+//import teamScraper from "./TeamScraper";
 
 puppeteer.use(StealthPlugin());
 
-const regionScraper = async (scrapeURL: string, selectors: string[]): Promise<Set<string>> => {
+const regionScraper = async (): Promise<Region[]> =>  {
+  //Portal to a list of regions with teams
+  //And the HTML element containing their name and URL
+  const scrapeURL: string = "https://liquipedia.net/dota2/Portal:Teams";
+  const selector: string = '.panel-box-heading';
+
   const browser: Browser = await puppeteer.launch({
     headless: true,
-    executablePath: executablePath()
+    executablePath: executablePath(),
   });
 
-  const listOfRegions: Set<string> = new Set();
+  let region: Region[] = [];
+  let teams: Team[] = [];
 
   try {
     const page = await browser.newPage();
     await page.goto(scrapeURL);
 
-    for (const selector of selectors) {
-      const pageElements: ElementHandle<Element>[] = await page.$$(selector);
+    const regionElements: ElementHandle<Element>[] = await page.$$(selector);
 
-      const data = await Promise.all(
-        pageElements.map(async (item) => {
-          return item.evaluate(el => el.textContent?.trim() || '');
-        })
-      );
+    for (const regionElement of regionElements) {
+      const name = await regionElement.$eval("a",(el) => el.textContent?.trim() || "");
+      const url = await regionElement.$eval("a",(el) => el.getAttribute("href") || "");
 
-      const cleanedData = data.filter((item): item is string => item !== '');
-      cleanedData.forEach(item => listOfRegions.add(item));
+      if(url.includes("Inactive")) {
+        continue
+      }
+      region.push({ name, url });
     }
 
-    console.log([...listOfRegions]);
-    return listOfRegions;
+    console.log(region);
+    return region;
   } catch (error) {
-    console.error('Error during scraping:', error);
-    return new Set();
+    console.error("Error during scraping:", error);
+    return [];
   } finally {
     await browser.close();
   }
