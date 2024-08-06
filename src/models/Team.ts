@@ -1,4 +1,6 @@
-type Team = {
+import { Player } from "./Player";
+import { Staff } from "./Staff";
+export type Team = {
     name: string,
     url: string,
     players: Player[];

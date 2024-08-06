@@ -1,11 +1,11 @@
-import regionScraper from "./RegionScraper"
-import teamScraper from "./TeamScraper";
+import regionScraper from "./Controllers/RegionScraper"
+import teamScraper from "./Controllers/TeamScraper";
+import { Region } from "./models/Region";
+import { Team } from "./models/Team";
 
 
 const app = async () => {
-    const scrapeURL = "https://liquipedia.net/dota2/Main_Page";
-    
-
+   
     const regionList: Region[] = await regionScraper();
     let teamList: Team[] = []
 
@@ -15,6 +15,7 @@ const app = async () => {
     }
     
 
+    console.log(teamList)
   };
   
   app();
