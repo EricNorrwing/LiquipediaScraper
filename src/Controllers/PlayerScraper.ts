@@ -2,16 +2,18 @@ import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { Browser, executablePath } from "puppeteer";
 import { Player } from "../models/Player";
+import baseURL from "../baseUrl";
 
 puppeteer.use(StealthPlugin());
 
-const playerScraper = async (): Promise<Player[]> => {
+const playerScraper = async (relPlayerURL: string): Promise<Player[]> => {
   const browser: Browser = await puppeteer.launch({
     headless: true,
     executablePath: executablePath(),
   });
 
-  const scrapeURL: string = "https://liquipedia.net/dota2/MiCKe";
+  //const scrapeURL: string = baseURL + relPlayerURL;
+  const scrapeURL=relPlayerURL
   let players: Player[] = [];
 
   try {
@@ -22,33 +24,90 @@ const playerScraper = async (): Promise<Player[]> => {
     const ignSelector: string = ".firstHeading";
 
     // Extract the IGN
-    const ign = await page.$eval(ignSelector, el => el.textContent?.trim() || "");
+    const ign = await page.$eval(ignSelector, (el) => el.textContent?.trim() || "");
 
-    // Extract the earnings by finding the "Approx. Total Winnings:" and then getting the adjacent sibling div
-    const earnings = await page.evaluate(() => {
-      const labels = Array.from(document.querySelectorAll('div.infobox-cell-2.infobox-description'));
-      
+    // Extract the rest of the player data
+    const playerInfo = await page.evaluate(() => {
+      const labels = Array.from(document.querySelectorAll("div.infobox-cell-2.infobox-description"));
+
+      let name = "";
+      let nationality = "";
       let earnings = 0;
-      
-      for (const labelElement of labels) {
-        if (labelElement.textContent?.trim() === 'Approx. Total Winnings:') {
-          const earningsElement = labelElement.nextElementSibling;
-          if (earningsElement) {
-            const earningsText = earningsElement.textContent?.replace(/[^0-9.]/g, '').trim() || "0";
+      let dateOfBirth = "";
+      let region = "";
+      let yearsActive = "";
+      let currentRoles: string[] = [];
+      let team = "";
+      let signatureHeroes: string[] = [];
+
+      labels.forEach((labelElement) => {
+        const label = labelElement.textContent?.trim();
+
+        switch (label) {
+          case "Name:":
+            name = labelElement.nextElementSibling?.textContent?.trim() || "";
+            break;
+          case "Nationality:":
+            nationality = labelElement.nextElementSibling?.textContent?.trim() || "";
+            break;
+          case "Approx. Total Winnings:":
+            const earningsText = labelElement.nextElementSibling?.textContent?.replace(/[^0-9.]/g, "").trim() || "0";
             earnings = Number(earningsText);
             break;
-          }
+          case "Born:":
+            dateOfBirth = labelElement.nextElementSibling?.textContent?.trim() || "";
+            break;
+          case "Region:":
+            region = labelElement.nextElementSibling?.textContent?.trim() || "";
+            break;
+          case "Years Active (Player):":
+            yearsActive = labelElement.nextElementSibling?.textContent?.trim() || "";
+            break;
+          case "Current Role:":
+            currentRoles = labelElement.nextElementSibling?.textContent?.split(',').map(role => role.trim()) || [];
+            break;
+          case "Team:":
+            team = labelElement.nextElementSibling?.textContent?.trim() || "";
+            break;
+            /*
+          case "Signature Hero:":
+            signatureHeroes = Array.from(labelElement.nextElementSibling?.querySelectorAll('img')).map(img => img.alt) || [];
+            break; */
+          default:
+            break;
         }
-      }
-      
-      return earnings;
+      });
+
+      return {
+        name,
+        nationality,
+        earnings,
+        dateOfBirth,
+        region,
+        yearsActive,
+        currentRoles,
+        team,
+        signatureHeroes,
+      };
     });
 
     // Push the player data
     if (ign) {
-      players.push({ name: ign, earnings });
+      players.push({
+        ign,
+        name: playerInfo.name,
+        nationality: playerInfo.nationality,
+        earnings: playerInfo.earnings,
+        dateOfBirth: playerInfo.dateOfBirth,
+        region: playerInfo.region,
+        yearsActive: playerInfo.yearsActive,
+        currentRoles: playerInfo.currentRoles,
+        team: playerInfo.team,
+        url: scrapeURL,
+        //signatureHeroes: playerInfo.signatureHeroes
+      });
     }
-    console.log(ign,earnings)
+    console.log(players);
 
     return players;
   } catch (error) {

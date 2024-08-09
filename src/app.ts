@@ -17,7 +17,7 @@ const app = async () => {
     */
 
     
-    playerScraper()
+    playerScraper("https://liquipedia.net/dota2/MiCKe")
     //console.log(teamList)
   };
   
