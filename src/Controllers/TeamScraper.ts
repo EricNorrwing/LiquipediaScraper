@@ -29,11 +29,11 @@ const teamScraper = async (relRegionURL: string): Promise<Team[]> => {
             const name = await teamElement.$eval("a",(el) => el.textContent?.trim() || "")
             const url = await teamElement.$eval("a",(el) => el.getAttribute("href") || "")
 
-            const players: Player[] = playerScraper(url)
+            //const players: Player[] = playerScraper(url)
       
             
             console.log(name, url)
-            teams.push({ name, url, players, staff, region, earnings, location, active});
+            //teams.push({ name, url, players, staff, region, earnings, location, active});
           }
 
 
