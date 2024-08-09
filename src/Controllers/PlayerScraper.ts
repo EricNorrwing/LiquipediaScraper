@@ -13,32 +13,29 @@ const playerScraper = async (relPlayerURL: string): Promise<Player[]> => {
   });
 
   //const scrapeURL: string = baseURL + relPlayerURL;
-  const scrapeURL=relPlayerURL
-  let players: Player[] = [];
+  const scrapeURL = relPlayerURL
+  let player: Player[] = [];
 
   try {
     const page = await browser.newPage();
     await page.goto(scrapeURL);
 
-    // Selector for IGN
     const ignSelector: string = ".firstHeading";
 
-    // Extract the IGN
     const ign = await page.$eval(ignSelector, (el) => el.textContent?.trim() || "");
+    let name = "";
+    let nationality = "";
+    let earnings = 0;
+    let dateOfBirth = "";
+    let region = "";
+    let yearsActive = "";
+    let currentRoles: string[] = [];
+    let team = "";
+    let signatureHeroes: string[] = [];
+    
 
-    // Extract the rest of the player data
     const playerInfo = await page.evaluate(() => {
       const labels = Array.from(document.querySelectorAll("div.infobox-cell-2.infobox-description"));
-
-      let name = "";
-      let nationality = "";
-      let earnings = 0;
-      let dateOfBirth = "";
-      let region = "";
-      let yearsActive = "";
-      let currentRoles: string[] = [];
-      let team = "";
-      let signatureHeroes: string[] = [];
 
       labels.forEach((labelElement) => {
         const label = labelElement.textContent?.trim();
@@ -69,10 +66,10 @@ const playerScraper = async (relPlayerURL: string): Promise<Player[]> => {
           case "Team:":
             team = labelElement.nextElementSibling?.textContent?.trim() || "";
             break;
-            /*
-          case "Signature Hero:":
-            signatureHeroes = Array.from(labelElement.nextElementSibling?.querySelectorAll('img')).map(img => img.alt) || [];
-            break; */
+          /*
+        case "Signature Hero:":
+          signatureHeroes = Array.from(labelElement.nextElementSibling?.querySelectorAll('img')).map(img => img.alt) || [];
+          break; */
           default:
             break;
         }
@@ -93,7 +90,7 @@ const playerScraper = async (relPlayerURL: string): Promise<Player[]> => {
 
     // Push the player data
     if (ign) {
-      players.push({
+      player.push({
         ign,
         name: playerInfo.name,
         nationality: playerInfo.nationality,
@@ -107,9 +104,9 @@ const playerScraper = async (relPlayerURL: string): Promise<Player[]> => {
         //signatureHeroes: playerInfo.signatureHeroes
       });
     }
-    console.log(players);
+    console.log(player);
 
-    return players;
+    return player;
   } catch (error) {
     console.error("Error during player scraping:", error);
     return [];
