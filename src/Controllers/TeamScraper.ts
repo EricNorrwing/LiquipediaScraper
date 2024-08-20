@@ -1,61 +1,73 @@
-import puppeteer from 'puppeteer-extra';
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { Browser, ElementHandle, executablePath } from 'puppeteer';
-import baseURL from '../baseUrl';
-import { Team } from '../models/Team';
-import TeamDataScraper from "./TeamDataScraper"
-import playerScraper from './PlayerScraper';
-import { Player } from '../models/Player';
+import puppeteer from "puppeteer-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import { Browser, executablePath } from "puppeteer";
+import { Player } from "../models/Player";
+import { Team } from "../models/Team";
+import baseURL from "../baseUrl";
 
 puppeteer.use(StealthPlugin());
 
-const teamScraper = async (relRegionURL: string): Promise<Team[]> => {
-  
+const teamScraper = async (teamURL: string, teamName: string): Promise<Team> => {
     const browser: Browser = await puppeteer.launch({
         headless: true,
         executablePath: executablePath(),
-      });
+    });
 
-    const regionURL: string = baseURL()+relRegionURL
-    console.log(regionURL)
-    const selector: string = '.team-template-text'
-    const teams: Team[] = []
+    //const scrapeURL: string = baseURL + relTeamURL;
+    let team: Team = {
+        name: teamName,
+        url: teamURL,
+        earnings : 0,
+        region: "", 
+        location: ""   
+    };
 
     try {
         const page = await browser.newPage();
-        await page.goto(regionURL);
+        await page.goto(teamURL);
 
-        const teamElements: ElementHandle<Element>[] = await page.$$(selector);
+        const playerInfo = await page.evaluate(() => {
+            const labels = Array.from(document.querySelectorAll("div.infobox-cell-2.infobox-description"));
 
-        for (const teamElement of teamElements) {
-            const name = await teamElement.$eval("a",(el) => el.textContent?.trim() || "")
-            const url = await teamElement.$eval("a",(el) => el.getAttribute("href") || "")
+            labels.forEach((labelElement) => {
+                const label = labelElement.textContent?.trim();
 
-            if(url) {
-              const teamPage = await browser.newPage();
-              await teamPage.goto(baseURL() + url)
+                switch (label) {
+                    case "Location:":
+                        team.location = labelElement.nextElementSibling?.textContent?.trim() || "";
+                        break;
+                    case "Region:":
+                        team.region = labelElement.nextElementSibling?.textContent?.trim() || "";
+                        break;
+                    /*
+                    case "Coach:":
+                        team.coach = labelElement.nextElementSibling?.textContent?.trim() || "";
+                        break;
+                    case "Manager":
+                        team.manager = labelElement.nextElementSibling?.textContent?.trim() || "";
+                        break; */
+                    case "Approx. Total Winnings:":
+                        const earningsText = labelElement.nextElementSibling?.textContent?.replace(/[^0-9.]/g, "").trim() || "0";
+                        team.earnings = Number(earningsText);
+                        break;
+                    default:
+                        break;
+                }
+            });
 
-              const team: Team = await TeamDataScraper(url, name)
-              console.log(team)
-              
+            return {
+                team
+            };
+        });
+       
 
-
-
-            }
-
-            //const players: Player[] = playerScraper(url)
-            console.log(name, url)
-            //teams.push({ name, url, players, staff, region, earnings, location, active});
-          }
-
-
-    return teams
-  } catch (error) {
-    console.error('Error during team scraping:', error)
-    return []
-  } finally {
-    await browser.close();
-  }
+        return team;
+    } catch (error) {
+        console.error("Error during player scraping:", error);
+        return team;
+    } finally {
+        await browser.close();
+    }
 };
 
-export default teamScraper
+export default teamScraper;
