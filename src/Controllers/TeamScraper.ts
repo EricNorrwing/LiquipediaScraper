@@ -3,6 +3,7 @@ import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { Browser, ElementHandle, executablePath } from 'puppeteer';
 import baseURL from '../baseUrl';
 import { Team } from '../models/Team';
+import TeamDataScraper from "./TeamDataScraper"
 import playerScraper from './PlayerScraper';
 import { Player } from '../models/Player';
 
@@ -29,6 +30,18 @@ const teamScraper = async (relRegionURL: string): Promise<Team[]> => {
         for (const teamElement of teamElements) {
             const name = await teamElement.$eval("a",(el) => el.textContent?.trim() || "")
             const url = await teamElement.$eval("a",(el) => el.getAttribute("href") || "")
+
+            if(url) {
+              const teamPage = await browser.newPage();
+              await teamPage.goto(baseURL() + url)
+
+              const team: Team = await TeamDataScraper(url, name)
+              console.log(team)
+              
+
+
+
+            }
 
             //const players: Player[] = playerScraper(url)
             console.log(name, url)

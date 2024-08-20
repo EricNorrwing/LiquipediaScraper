@@ -12,8 +12,7 @@ const playerScraper = async (relPlayerURL: string): Promise<Player[]> => {
     executablePath: executablePath(),
   });
 
-  //const scrapeURL: string = baseURL + relPlayerURL;
-  const scrapeURL = relPlayerURL
+  const scrapeURL: string = baseURL + relPlayerURL;
   let player: Player[] = [];
 
   try {
