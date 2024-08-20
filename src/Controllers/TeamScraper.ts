@@ -16,6 +16,7 @@ const teamScraper = async (relRegionURL: string): Promise<Team[]> => {
       });
 
     const regionURL: string = baseURL()+relRegionURL
+    console.log(regionURL)
     const selector: string = '.team-template-text'
     const teams: Team[] = []
 
@@ -30,8 +31,6 @@ const teamScraper = async (relRegionURL: string): Promise<Team[]> => {
             const url = await teamElement.$eval("a",(el) => el.getAttribute("href") || "")
 
             //const players: Player[] = playerScraper(url)
-      
-            
             console.log(name, url)
             //teams.push({ name, url, players, staff, region, earnings, location, active});
           }

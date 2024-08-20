@@ -1,5 +1,5 @@
 const baseURL = (): string => {
-    return "https://liquipedia.net/";
+    return "https://liquipedia.net";
   };
 
   export default baseURL

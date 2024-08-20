@@ -6,19 +6,19 @@ import { Team } from "./models/Team";
 
 
 const app = async () => {
-   /*
+   
     const regionList: Region[] = await regionScraper();
     let teamList: Team[] = []
 
     for (const region of regionList) {
         const teams = await teamScraper(region.url)
+        console.log(teams)
         teamList = teamList.concat(teams)
     }
-    */
-
     
-    playerScraper("https://liquipedia.net/dota2/MiCKe")
-    //console.log(teamList)
+
+    //playerScraper("https://liquipedia.net/dota2/MiCKe")
+    console.log(teamList)
   };
   
   app();

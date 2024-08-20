@@ -31,7 +31,6 @@ const playerScraper = async (relPlayerURL: string): Promise<Player[]> => {
     let yearsActive = "";
     let currentRoles: string[] = [];
     let team = "";
-    let signatureHeroes: string[] = [];
     
 
     const playerInfo = await page.evaluate(() => {
@@ -66,10 +65,6 @@ const playerScraper = async (relPlayerURL: string): Promise<Player[]> => {
           case "Team:":
             team = labelElement.nextElementSibling?.textContent?.trim() || "";
             break;
-          /*
-        case "Signature Hero:":
-          signatureHeroes = Array.from(labelElement.nextElementSibling?.querySelectorAll('img')).map(img => img.alt) || [];
-          break; */
           default:
             break;
         }
@@ -84,11 +79,9 @@ const playerScraper = async (relPlayerURL: string): Promise<Player[]> => {
         yearsActive,
         currentRoles,
         team,
-        signatureHeroes,
       };
     });
 
-    // Push the player data
     if (ign) {
       player.push({
         ign,
@@ -101,7 +94,6 @@ const playerScraper = async (relPlayerURL: string): Promise<Player[]> => {
         currentRoles: playerInfo.currentRoles,
         team: playerInfo.team,
         url: scrapeURL,
-        //signatureHeroes: playerInfo.signatureHeroes
       });
     }
     console.log(player);
