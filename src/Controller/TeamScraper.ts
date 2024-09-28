@@ -2,10 +2,10 @@ import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { Browser, ElementHandle, executablePath } from 'puppeteer';
 import baseURL from '../baseUrl';
-import { Team } from '../models/Team';
+import { Team } from '../model/Team';
 import TeamDataScraper from "./TeamDataScraper"
 import playerScraper from './PlayerScraper';
-import { Player } from '../models/Player';
+import { Player } from '../model/Player';
 
 puppeteer.use(StealthPlugin());
 

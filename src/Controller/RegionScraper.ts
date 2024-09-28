@@ -1,8 +1,8 @@
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { Browser, ElementHandle, executablePath } from "puppeteer";
-import { Region } from "../models/Region";
-import { Team } from "../models/Team";
+import { Region } from "../model/Region";
+import { Team } from "../model/Team";
 
 puppeteer.use(StealthPlugin());
 

@@ -1,8 +1,8 @@
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { Browser, executablePath } from "puppeteer";
-import { Player } from "../models/Player";
-import { Team } from "../models/Team";
+import { Player } from "../model/Player";
+import { Team } from "../model/Team";
 import baseURL from "../baseUrl";
 
 puppeteer.use(StealthPlugin());
